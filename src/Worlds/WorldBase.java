@@ -54,6 +54,7 @@ public abstract class WorldBase {
     public void render(Graphics g){
 
         for (int i = 0; i <= 800; i = i + GridPixelsize) {
+        	// instead of making the lines dissapear, i just made them the same color as the bg
         	 Color bgColor = new Color (255,0,255);
             g.setColor(bgColor);
             g.drawLine(0, i, handler.getWidth() , i);

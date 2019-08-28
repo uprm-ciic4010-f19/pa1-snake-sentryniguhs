@@ -35,6 +35,7 @@ public class DisplayScreen {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         Color bgColor = new Color (255,0,255);
+        // set bg color to purple using a new color object formed by its RBG values
         frame.setBackground(bgColor);
 
         try {

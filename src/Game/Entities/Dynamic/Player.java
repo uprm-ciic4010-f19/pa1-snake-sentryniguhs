@@ -35,6 +35,7 @@ public class Player {
 
     public void tick(){
         moveCounter += 3;
+        // altered the move speed here to triple the usual amount
         if(moveCounter>=5) {
             checkCollisionAndMove();
             moveCounter=0;
