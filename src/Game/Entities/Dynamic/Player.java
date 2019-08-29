@@ -21,6 +21,8 @@ public class Player {
     public int moveCounter;
 
     public String direction;//is your first name one?
+    
+    private int currentScore;
 
     public Player(Handler handler){
         this.handler = handler;
@@ -30,6 +32,7 @@ public class Player {
         direction= "Right";
         justAte = false;
         lenght= 1;
+        currentScore = 0; 
 
     }
 
@@ -116,7 +119,11 @@ public class Player {
 
             }
         }
-
+        g.setColor(Color.BLACK);
+    	Font currentFont = g.getFont();
+    	Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.0F);
+    	g.setFont(newFont);
+        g.drawString(currentScore + "", 885, 360);
 
     }
 
@@ -125,6 +132,7 @@ public class Player {
         Tail tail= null;
         handler.getWorld().appleLocation[xCoord][yCoord]=false;
         handler.getWorld().appleOnBoard=false;
+        currentScore = currentScore + (int)Math.sqrt((2 * currentScore) + 1);
         switch (direction){
             case "Left":
                 if( handler.getWorld().body.isEmpty()){
