@@ -11,7 +11,9 @@ import java.util.Random;
  */
 public class Player {
 
-    public int lenght;
+	//created new instance variable N for speed counter stuff
+    private static int n;
+	public int lenght;
     public boolean justAte;
     private Handler handler;
 
@@ -30,11 +32,21 @@ public class Player {
         direction= "Right";
         justAte = false;
         lenght= 1;
+        n = 0;
 
     }
 
     public void tick(){
-        moveCounter += 3;
+    	//created variable n witch will increase or decrease when + or - is pressed and then will be added to the 
+    	//original speed to end up with a higher or lower speed
+    	if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_ADD)){
+    		n++;
+    	}
+    	if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_SUBTRACT)){
+    		n--;
+    	}
+    	
+        moveCounter += 3 + n;
         // altered the move speed here to triple the usual amount
         if(moveCounter>=5) {
             checkCollisionAndMove();
@@ -48,6 +60,10 @@ public class Player {
             direction="Left";
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)){
             direction="Right";
+        }
+        // if N is ever pressed, the program will act like it just ate a fruit (check modifications to the eat() method below
+        if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_N)){
+        	Eat();
         }
 
     }
@@ -98,9 +114,7 @@ public class Player {
             handler.getWorld().body.removeLast();
             handler.getWorld().body.addFirst(new Tail(x, y,handler));
         }
-
     }
-
     public void render(Graphics g,Boolean[][] playeLocation){
         Random r = new Random();
         for (int i = 0; i < handler.getWorld().GridWidthHeightPixelCount; i++) {
@@ -123,8 +137,11 @@ public class Player {
     public void Eat(){
         lenght++;
         Tail tail= null;
+        // 
+        if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_N) == false) {
         handler.getWorld().appleLocation[xCoord][yCoord]=false;
         handler.getWorld().appleOnBoard=false;
+        }
         switch (direction){
             case "Left":
                 if( handler.getWorld().body.isEmpty()){
