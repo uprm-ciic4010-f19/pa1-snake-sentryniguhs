@@ -174,7 +174,17 @@ public class GameSetUp implements Runnable {
         g.clearRect(0, 0, width, height);
 
         //Draw Here!
-
+        
+        //Separates main game from score board
+        g.setColor(Color.BLACK);
+        g.drawLine(780, 0, 780, 800);
+        
+        //Draws score rectangle
+        g.setColor(Color.WHITE);
+        g.fillRoundRect(780, 300, 250, 100, 6, 6);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(780, 300, 250, 100, 6, 6);
+ 
         g.drawImage(loading ,0,0,width,height,null);
         if(State.getState() != null)
             State.getState().render(g);

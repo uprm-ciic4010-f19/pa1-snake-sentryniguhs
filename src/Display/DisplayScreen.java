@@ -1,10 +1,15 @@
 package Display;
 
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.JFrame;
+
+import Game.GameStates.State;
+import sun.java2d.loops.DrawRect;
 
 /**
  * Created by AlexVR on 7/1/2018.
@@ -50,9 +55,14 @@ public class DisplayScreen {
         canvas.setMinimumSize(new Dimension(width, height));
         canvas.setFocusable(false);
         canvas.setBackground(bgColor);
+        
 
         frame.add(canvas);
         frame.pack();
+    }
+    //Creates new display for Game Over 
+    public void createDisplayGameOver(){
+    	
     }
 
     public Canvas getCanvas(){

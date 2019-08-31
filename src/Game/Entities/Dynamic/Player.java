@@ -1,17 +1,32 @@
 package Game.Entities.Dynamic;
 
+import Main.GameSetUp;
 import Main.Handler;
+import UI.UIImageButton;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.text.AttributedCharacterIterator.Attribute;
+import java.util.Map;
 import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import Display.DisplayScreen;
 
 /**
  * Created by AlexVR on 7/2/2018.
  */
 public class Player {
-
-	//created new instance variable N for speed counter stuff
+  
+  private static final Map<? extends Attribute, ?> SANS_SERIF = null;
+	private static final int BOLD = 0;
+	private static final int ITALIC = 0;
+ //created new instance variable N for speed counter stuff
     private static int n;
 	public int lenght;
     public boolean justAte;
@@ -23,6 +38,8 @@ public class Player {
     public int moveCounter;
 
     public String direction;//is your first name one?
+    
+    private int currentScore;
 
     public Player(Handler handler){
         this.handler = handler;
@@ -32,8 +49,8 @@ public class Player {
         direction= "Right";
         justAte = false;
         lenght= 1;
-        n = 0;
-
+       currentScore = 0; 
+       n = 0;
     }
 
     public void tick(){
@@ -130,7 +147,11 @@ public class Player {
 
             }
         }
-
+        g.setColor(Color.BLACK);
+    	Font currentFont = g.getFont();
+    	Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.0F);
+    	g.setFont(newFont);
+        g.drawString(currentScore + "", 885, 360);
 
     }
 
@@ -142,6 +163,7 @@ public class Player {
         handler.getWorld().appleLocation[xCoord][yCoord]=false;
         handler.getWorld().appleOnBoard=false;
         }
+         CurrentScore = currentScore + (int)Math.sqrt((2 * currentScore) + 1);
         switch (direction){
             case "Left":
                 if( handler.getWorld().body.isEmpty()){
@@ -254,6 +276,7 @@ public class Player {
 
             }
         }
+        GameOver();  
     }
 
     public boolean isJustAte() {
@@ -262,5 +285,63 @@ public class Player {
 
     public void setJustAte(boolean justAte) {
         this.justAte = justAte;
+    }
+    public void GameOver() {
+    	JFrame frame = new JFrame("Game Over");
+    	frame.setSize(1000, 800);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
+        //Creating the canvas.
+        Canvas canvas = new Canvas();
+        canvas.setSize(1000, 800);
+        canvas.setBackground(Color.RED);
+        canvas.setVisible(true);
+        canvas.setFocusable(false);
+
+        //Putting it all together.
+        frame.add(canvas);
+        canvas.createBufferStrategy(3);
+        boolean running = true;
+
+        BufferStrategy bufferStrategy;
+        Graphics graphics;
+        
+        String[] texts = {"You really suck", "Wow, that was pretty bad", "Did your dad leave you and your mom alone?",
+        				"How old were you when you became a failure?", "God really made a mistake when you came along",
+        				"Certainly looks like the birth control pills didn't work", "You monkey...", "You're such a dissapointment"};
+        Random randomText = new Random();
+        int randNum = randomText.nextInt(7);
+        
+        //Quit and Restart buttons
+        
+
+        while (running) {
+            bufferStrategy = canvas.getBufferStrategy();
+            graphics = bufferStrategy.getDrawGraphics();
+            graphics.clearRect(0, 0, 1000, 800);
+            
+            //Draws RoundRect
+            graphics.setColor(Color.WHITE);
+            graphics.fillRoundRect(0, 0, 1000, 350, 100, 100);
+            
+            //Writes "GAME OVER"
+            graphics.setColor(Color.BLACK);
+            Font currentFont = graphics.getFont();
+        	Font newFont = currentFont.deriveFont(currentFont.getSize() * 7.0F);
+        	graphics.setFont(newFont);
+            graphics.drawString("GAME OVER", 230, 200);
+            
+            //Writes mean text
+            currentFont = new Font(SANS_SERIF);
+        	newFont = currentFont.deriveFont(ITALIC, currentFont.getSize() * 2.5F);
+        	graphics.setFont(newFont);
+            graphics.drawString(texts[randNum], 125, 345);
+
+            bufferStrategy.show();
+            graphics.dispose();
+        }
     }
 }

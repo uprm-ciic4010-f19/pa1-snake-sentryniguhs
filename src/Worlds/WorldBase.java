@@ -52,15 +52,23 @@ public abstract class WorldBase {
     }
 
     public void render(Graphics g){
+//    	g.setColor(Color.BLACK);
+//    	Font currentFont = g.getFont();
+//    	Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.0F);
+//    	g.setFont(newFont);
+//    	
+//    	if (player.isJustAte()) {
+//    		g.drawString(player.currentScore() + "", 875, 360);
+//    	}
+    		
+        
+//    	for (int i = 0; i <= 800; i = i + GridPixelsize) {
+        	// Commented out white lines
+//            g.setColor(Color.BLACK);
+//            g.drawLine(0, i, handler.getWidth() , i);
+//            g.drawLine(i,0,i,handler.getHeight());
 
-        for (int i = 0; i <= 800; i = i + GridPixelsize) {
-        	// instead of making the lines dissapear, i just made them the same color as the bg
-        	 Color bgColor = new Color (255,0,255);
-            g.setColor(bgColor);
-            g.drawLine(0, i, handler.getWidth() , i);
-            g.drawLine(i,0,i,handler.getHeight());
-
-        }
+//        }
 
 
 
