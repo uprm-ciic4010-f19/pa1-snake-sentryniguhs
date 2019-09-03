@@ -59,12 +59,7 @@ public class DisplayScreen {
 
         frame.add(canvas);
         frame.pack();
-    }
-    //Creates new display for Game Over 
-    public void createDisplayGameOver(){
-    	
-    }
-
+    }    
     public Canvas getCanvas(){
         return canvas;
     }

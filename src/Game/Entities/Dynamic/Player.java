@@ -17,21 +17,22 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Display.DisplayScreen;
+import Game.Entities.Static.Apple;
 
 /**
  * Created by AlexVR on 7/2/2018.
  */
 public class Player {
   
-  private static final Map<? extends Attribute, ?> SANS_SERIF = null;
-	private static final int BOLD = 0;
-	private static final int ITALIC = 0;
+  
  //created new instance variable N for speed counter stuff
     private static int n;
 	public int lenght;
     public boolean justAte;
     private Handler handler;
 
+    public Boolean goodApple;
+    
     public int xCoord;
     public int yCoord;
 
@@ -40,6 +41,9 @@ public class Player {
     public String direction;//is your first name one?
     
     private int currentScore;
+    
+    private Player firstTail;
+    private Tail tailIteration;
 
     public Player(Handler handler){
         this.handler = handler;
@@ -49,7 +53,8 @@ public class Player {
         direction= "Right";
         justAte = false;
         lenght= 1;
-       currentScore = 0; 
+       currentScore = 0;
+       goodApple = true; 
        n = 0;
     }
 
@@ -119,9 +124,13 @@ public class Player {
                 }
                 break;
         }
+        firstTail = handler.getWorld().player;
+        for (int i = 0; i < handler.getWorld().body.size(); i++) {
+        	tailIteration = handler.getWorld().body.get(i);
+        	if (firstTail.xCoord == tailIteration.x && firstTail.yCoord == tailIteration.y)
+        		GameOver();
+        }
         handler.getWorld().playerLocation[xCoord][yCoord]=true;
-
-
         if(handler.getWorld().appleLocation[xCoord][yCoord]){
             Eat();
         }
@@ -137,9 +146,23 @@ public class Player {
         for (int i = 0; i < handler.getWorld().GridWidthHeightPixelCount; i++) {
             for (int j = 0; j < handler.getWorld().GridWidthHeightPixelCount; j++) {
                 g.setColor(Color.GREEN);
-
-                if(playeLocation[i][j]||handler.getWorld().appleLocation[i][j]){
+   
+                if(playeLocation[i][j]){
                     g.fillRect((i*handler.getWorld().GridPixelsize),
+                            (j*handler.getWorld().GridPixelsize),
+                            handler.getWorld().GridPixelsize,
+                            handler.getWorld().GridPixelsize);
+                }
+                if (handler.getWorld().appleLocation[i][j] && goodApple) {
+                	g.fillRect((i*handler.getWorld().GridPixelsize),
+                            (j*handler.getWorld().GridPixelsize),
+                            handler.getWorld().GridPixelsize,
+                            handler.getWorld().GridPixelsize);
+                }
+                else if (handler.getWorld().appleLocation[i][j] && !goodApple){
+                	Color badAppl = new Color(165,42,42);
+                	g.setColor(badAppl);
+                	g.fillRect((i*handler.getWorld().GridPixelsize),
                             (j*handler.getWorld().GridPixelsize),
                             handler.getWorld().GridPixelsize,
                             handler.getWorld().GridPixelsize);
@@ -163,7 +186,6 @@ public class Player {
         handler.getWorld().appleLocation[xCoord][yCoord]=false;
         handler.getWorld().appleOnBoard=false;
         }
-         CurrentScore = currentScore + (int)Math.sqrt((2 * currentScore) + 1);
         switch (direction){
             case "Left":
                 if( handler.getWorld().body.isEmpty()){
@@ -263,8 +285,21 @@ public class Player {
                 }
                 break;
         }
+        //Updates score depending on whether the apple is 'good' or 'bad' and deletes tail if apple is 'bad'
+        if(goodApple)
+        	currentScore = currentScore + (int)Math.sqrt((2 * currentScore) + 1);
+        else {
+        	currentScore = currentScore - (int)(Math.sqrt(2) + Math.sqrt(2 *(currentScore + Math.sqrt((2 * currentScore) + 1))));
+        	handler.getWorld().body.removeLast();
+        	handler.getWorld().playerLocation[tail.x][tail.y] = false;
+        }
+        //If the score reaches a number less than zero, a Game Over screen is displayed
+        if (currentScore < 0)
+        	GameOver();
         handler.getWorld().body.addLast(tail);
         handler.getWorld().playerLocation[tail.x][tail.y] = true;
+        //Changes boolean value of whether or not the apple is 'good'
+        goodApple = handler.getWorld().appleisGood();
     }
 
     public void kill(){
@@ -275,8 +310,7 @@ public class Player {
                 handler.getWorld().playerLocation[i][j]=false;
 
             }
-        }
-        GameOver();  
+        }  
     }
 
     public boolean isJustAte() {
@@ -287,6 +321,7 @@ public class Player {
         this.justAte = justAte;
     }
     public void GameOver() {
+    	//Creates new visible frame 
     	JFrame frame = new JFrame("Game Over");
     	frame.setSize(1000, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -308,16 +343,14 @@ public class Player {
 
         BufferStrategy bufferStrategy;
         Graphics graphics;
-        
+        //Chooses random failure text 
         String[] texts = {"You really suck", "Wow, that was pretty bad", "Did your dad leave you and your mom alone?",
         				"How old were you when you became a failure?", "God really made a mistake when you came along",
-        				"Certainly looks like the birth control pills didn't work", "You monkey...", "You're such a dissapointment"};
+        				"Certainly looks like the birth control pills didn't work", "You monkey...", "You're such a dissapointment",
+        				"You play like a Nazi", "You just justified Vietnam War's casualties"};
         Random randomText = new Random();
-        int randNum = randomText.nextInt(7);
+        int randNum = randomText.nextInt(9);
         
-        //Quit and Restart buttons
-        
-
         while (running) {
             bufferStrategy = canvas.getBufferStrategy();
             graphics = bufferStrategy.getDrawGraphics();
@@ -335,8 +368,7 @@ public class Player {
             graphics.drawString("GAME OVER", 230, 200);
             
             //Writes mean text
-            currentFont = new Font(SANS_SERIF);
-        	newFont = currentFont.deriveFont(ITALIC, currentFont.getSize() * 2.5F);
+        	newFont = currentFont.deriveFont(currentFont.getSize() * 2.5F);
         	graphics.setFont(newFont);
             graphics.drawString(texts[randNum], 125, 345);
 

@@ -7,6 +7,7 @@ import Main.Handler;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Random;
 
 
 /**
@@ -31,6 +32,8 @@ public abstract class WorldBase {
     public Boolean appleOnBoard;
     protected Apple apple;
     public Boolean[][] appleLocation;
+    
+    public Boolean appleisGood = true;
 
 
     public Boolean[][] playerLocation;
@@ -73,5 +76,9 @@ public abstract class WorldBase {
 
 
     }
+	public boolean appleisGood() {
+		Random r = new Random(); 
+		return r.nextBoolean();
+	}
 
 }

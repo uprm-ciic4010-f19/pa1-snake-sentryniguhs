@@ -1,5 +1,7 @@
 package Game.Entities.Static;
 
+import java.util.Random;
+
 import Main.Handler;
 
 /**
@@ -17,6 +19,5 @@ public class Apple {
         this.xCoord=x;
         this.yCoord=y;
     }
-
 
 }
