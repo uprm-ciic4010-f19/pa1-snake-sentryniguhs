@@ -33,8 +33,6 @@ public abstract class WorldBase {
     protected Apple apple;
     public Boolean[][] appleLocation;
     
-    public Boolean appleisGood = true;
-
 
     public Boolean[][] playerLocation;
 
@@ -46,7 +44,9 @@ public abstract class WorldBase {
 
         appleOnBoard = false;
 
-
+    }
+    public boolean isGoodCheck() {
+    	return apple.isGood();
     }
     public void tick(){
 
@@ -76,9 +76,5 @@ public abstract class WorldBase {
 
 
     }
-	public boolean appleisGood() {
-		Random r = new Random(); 
-		return r.nextBoolean();
-	}
 
 }

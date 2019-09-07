@@ -37,6 +37,7 @@ public class Player {
     public int yCoord;
 
     public int moveCounter;
+    public int stepAmount;
 
     public String direction;//is your first name one?
     
@@ -54,7 +55,8 @@ public class Player {
         justAte = false;
         lenght= 1;
        currentScore = 0;
-       goodApple = true; 
+       stepAmount = 0;
+       goodApple = true;
        n = 0;
     }
 
@@ -79,9 +81,9 @@ public class Player {
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)){
             direction="Down";
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT)){
-            direction="Left";
+            direction="Left";            
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)){
-            direction="Right";
+            direction="Right";            
         }
         // if N is ever pressed, the program will act like it just ate a fruit (check modifications to the eat() method below
         if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_N)){
@@ -94,12 +96,17 @@ public class Player {
         handler.getWorld().playerLocation[xCoord][yCoord]=false;
         int x = xCoord;
         int y = yCoord;
+        if (stepAmount >=1000 && goodApple) {
+        	goodApple = !goodApple;
+        	stepAmount = 0;
+        }
         switch (direction){
             case "Left":
                 if(xCoord==0){
                     kill();
                 }else{
                     xCoord--;
+                    stepAmount++;
                 }
                 break;
             case "Right":
@@ -107,6 +114,7 @@ public class Player {
                     kill();
                 }else{
                     xCoord++;
+                    stepAmount++;
                 }
                 break;
             case "Up":
@@ -114,6 +122,7 @@ public class Player {
                     kill();
                 }else{
                     yCoord--;
+                    stepAmount++;
                 }
                 break;
             case "Down":
@@ -121,6 +130,7 @@ public class Player {
                     kill();
                 }else{
                     yCoord++;
+                    stepAmount++;
                 }
                 break;
         }
@@ -159,7 +169,7 @@ public class Player {
                             handler.getWorld().GridPixelsize,
                             handler.getWorld().GridPixelsize);
                 }
-                else if (handler.getWorld().appleLocation[i][j] && !goodApple){
+                else if(handler.getWorld().appleLocation[i][j] && !goodApple) {
                 	Color badAppl = new Color(165,42,42);
                 	g.setColor(badAppl);
                 	g.fillRect((i*handler.getWorld().GridPixelsize),
@@ -298,8 +308,7 @@ public class Player {
         	GameOver();
         handler.getWorld().body.addLast(tail);
         handler.getWorld().playerLocation[tail.x][tail.y] = true;
-        //Changes boolean value of whether or not the apple is 'good'
-        goodApple = handler.getWorld().appleisGood();
+        goodApple = handler.getWorld().isGoodCheck();
     }
 
     public void kill(){

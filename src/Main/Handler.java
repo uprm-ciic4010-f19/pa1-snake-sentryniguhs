@@ -1,5 +1,6 @@
 package Main;
 
+import Game.Entities.Static.Apple;
 import Input.KeyManager;
 import Input.MouseManager;
 import Worlds.WorldBase;
@@ -50,6 +51,5 @@ public class Handler {
     public void setWorld(WorldBase world) {
         this.world = world;
     }
-
 
 }
