@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import Display.DisplayScreen;
 import Game.Entities.Static.Apple;
+import Game.GameStates.State;
 
 /**
  * Created by AlexVR on 7/2/2018.
@@ -69,21 +70,33 @@ public class Player {
     	if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_SUBTRACT)){
     		n--;
     	}
-    	
+    	// pause button
+    	if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_ESCAPE)) {
+    		State.setState(handler.getGame().pauseState);
+    	}
         moveCounter += 3 + n;
         // altered the move speed here to triple the usual amount
         if(moveCounter>=5) {
             checkCollisionAndMove();
             moveCounter=0;
         }
+        // added ifs to the basic movement so no backtracking
         if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP)){
+        	if(direction != "Down") {
             direction="Up";
+        	}
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)){
-            direction="Down";
+        	if(direction != "Up") {
+                direction="Down";
+            	}
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT)){
-            direction="Left";            
+        	if(direction != "Right") {
+                direction="Left";
+            	}            
         }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)){
-            direction="Right";            
+        	if(direction != "Left") {
+                direction="Right";
+            	}
         }
         // if N is ever pressed, the program will act like it just ate a fruit (check modifications to the eat() method below
         if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_N)){
@@ -100,26 +113,27 @@ public class Player {
         	goodApple = !goodApple;
         	stepAmount = 0;
         }
+        // fixed up the kill commands so now the snake goes to the opposite wall instead of dying
         switch (direction){
             case "Left":
                 if(xCoord==0){
-                    kill();
+                	xCoord = handler.getWorld().GridWidthHeightPixelCount-1;
                 }else{
                     xCoord--;
-                    stepAmount++;
                 }
+                stepAmount++;
                 break;
             case "Right":
                 if(xCoord==handler.getWorld().GridWidthHeightPixelCount-1){
-                    kill();
+                	xCoord = 0;
                 }else{
                     xCoord++;
-                    stepAmount++;
                 }
+                stepAmount++;
                 break;
             case "Up":
                 if(yCoord==0){
-                    kill();
+                	yCoord = handler.getWorld().GridWidthHeightPixelCount-1;
                 }else{
                     yCoord--;
                     stepAmount++;
@@ -127,7 +141,7 @@ public class Player {
                 break;
             case "Down":
                 if(yCoord==handler.getWorld().GridWidthHeightPixelCount-1){
-                    kill();
+                	yCoord = 0;
                 }else{
                     yCoord++;
                     stepAmount++;
