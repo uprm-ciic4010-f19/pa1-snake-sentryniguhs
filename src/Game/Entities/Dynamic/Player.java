@@ -12,6 +12,7 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.util.Map;
 import java.util.Random;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -46,6 +47,10 @@ public class Player {
     
     private Player firstTail;
     private Tail tailIteration;
+    
+    private Boolean tailDeleted;
+    private int tailDeleteX;
+    private int tailDeleteY;
 
     public Player(Handler handler){
         this.handler = handler;
@@ -59,6 +64,7 @@ public class Player {
        stepAmount = 0;
        goodApple = true;
        n = 0;
+       tailDeleted = false;
     }
 
     public void tick(){
@@ -109,9 +115,8 @@ public class Player {
         handler.getWorld().playerLocation[xCoord][yCoord]=false;
         int x = xCoord;
         int y = yCoord;
-        if (stepAmount >=1000 && goodApple) {
+        if (stepAmount >=250 && goodApple) {
         	goodApple = !goodApple;
-        	stepAmount = 0;
         }
         // fixed up the kill commands so now the snake goes to the opposite wall instead of dying
         switch (direction){
@@ -120,16 +125,16 @@ public class Player {
                 	xCoord = handler.getWorld().GridWidthHeightPixelCount-1;
                 }else{
                     xCoord--;
+                    stepAmount++;
                 }
-                stepAmount++;
                 break;
             case "Right":
                 if(xCoord==handler.getWorld().GridWidthHeightPixelCount-1){
                 	xCoord = 0;
                 }else{
                     xCoord++;
+                    stepAmount++;
                 }
-                stepAmount++;
                 break;
             case "Up":
                 if(yCoord==0){
@@ -166,17 +171,25 @@ public class Player {
         }
     }
     public void render(Graphics g,Boolean[][] playeLocation){
-        Random r = new Random();
         for (int i = 0; i < handler.getWorld().GridWidthHeightPixelCount; i++) {
             for (int j = 0; j < handler.getWorld().GridWidthHeightPixelCount; j++) {
                 g.setColor(Color.GREEN);
-   
+                
+                if (tailDeleted) {
+                	g.clearRect(tailDeleteX, tailDeleteY, handler.getWorld().GridPixelsize, handler.getWorld().GridPixelsize);
+                	tailDeleted = false;
+                }
                 if(playeLocation[i][j]){
                     g.fillRect((i*handler.getWorld().GridPixelsize),
                             (j*handler.getWorld().GridPixelsize),
                             handler.getWorld().GridPixelsize,
                             handler.getWorld().GridPixelsize);
                 }
+                else
+                	g.clearRect((i*handler.getWorld().GridPixelsize),
+                            (j*handler.getWorld().GridPixelsize),
+                            handler.getWorld().GridPixelsize,
+                            handler.getWorld().GridPixelsize);
                 if (handler.getWorld().appleLocation[i][j] && goodApple) {
                 	g.fillRect((i*handler.getWorld().GridPixelsize),
                             (j*handler.getWorld().GridPixelsize),
@@ -191,7 +204,6 @@ public class Player {
                             handler.getWorld().GridPixelsize,
                             handler.getWorld().GridPixelsize);
                 }
-
             }
         }
         g.setColor(Color.BLACK);
@@ -199,7 +211,6 @@ public class Player {
     	Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.0F);
     	g.setFont(newFont);
         g.drawString(currentScore + "", 885, 360);
-
     }
 
     public void Eat(){
@@ -309,20 +320,29 @@ public class Player {
                 }
                 break;
         }
-        //Updates score depending on whether the apple is 'good' or 'bad' and deletes tail if apple is 'bad'
-        if(goodApple)
+        //Updates score and adds tail if the apple isn't rotten
+        if(goodApple) {
         	currentScore = currentScore + (int)Math.sqrt((2 * currentScore) + 1);
-        else {
-        	currentScore = currentScore - (int)(Math.sqrt(2) + Math.sqrt(2 *(currentScore + Math.sqrt((2 * currentScore) + 1))));
-        	handler.getWorld().body.removeLast();
-        	handler.getWorld().playerLocation[tail.x][tail.y] = false;
+        	handler.getWorld().body.addLast(tail);
+        	handler.getWorld().playerLocation[tail.x][tail.y] = true;
         }
+        //Updates score and removes tail if apple is rotten
+        else if (handler.getWorld().body.size() != 0){
+        	currentScore = currentScore - (int)Math.sqrt((2 * currentScore) + 1);
+        	tailDeleteX = handler.getWorld().body.getLast().x;
+        	tailDeleteY = handler.getWorld().body.getLast().y;
+        	handler.getWorld().playerLocation[tailDeleteX][tailDeleteY] = false;
+        	handler.getWorld().body.removeLast();
+        	tailDeleted = true;
+        }
+        //Written else for when rotten apple is eaten, but the snake has no tail yet.
+        else
+        	currentScore = currentScore - (int)(Math.sqrt(2) + Math.sqrt(2 *(currentScore + Math.sqrt((2 * currentScore) + 1))));
         //If the score reaches a number less than zero, a Game Over screen is displayed
         if (currentScore < 0)
         	GameOver();
-        handler.getWorld().body.addLast(tail);
-        handler.getWorld().playerLocation[tail.x][tail.y] = true;
         goodApple = handler.getWorld().isGoodCheck();
+        stepAmount = 0;
     }
 
     public void kill(){
