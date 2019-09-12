@@ -33,6 +33,7 @@ public class Player {
     private Handler handler;
 
     public Boolean goodApple;
+    public Boolean JustAte;
     
     public int xCoord;
     public int yCoord;
@@ -59,6 +60,7 @@ public class Player {
        stepAmount = 0;
        goodApple = true;
        n = 0;
+       justAte = false;
     }
 
     public void tick(){
@@ -74,9 +76,14 @@ public class Player {
     	if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_ESCAPE)) {
     		State.setState(handler.getGame().pauseState);
     	}
+    	if(justAte == true) {
+    		n += 3;
+    		justAte = false;
+    	}
+    	
         moveCounter += 3 + n;
         // altered the move speed here to triple the usual amount
-        if(moveCounter>=5) {
+        if(moveCounter>=60) {
             checkCollisionAndMove();
             moveCounter=0;
         }
@@ -209,6 +216,7 @@ public class Player {
         if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_N) == false) {
         handler.getWorld().appleLocation[xCoord][yCoord]=false;
         handler.getWorld().appleOnBoard=false;
+        justAte = true;
         }
         switch (direction){
             case "Left":
