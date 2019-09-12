@@ -15,6 +15,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 
 /**
@@ -85,8 +86,10 @@ public class GameSetUp implements Runnable {
         State.setState(menuState);
 
         try {
-
-            audioFile = getClass().getResourceAsStream("/music/nature.wav");
+        	String[] songs = {"/music/Hot_Coffee.wav", "/music/Happiness_I_guess.wav", "/music/nature.wav"};
+        	Random r = new Random();
+        	
+            audioFile = getClass().getResourceAsStream(songs[r.nextInt(3)]);
             audioStream = AudioSystem.getAudioInputStream(audioFile);
             format = audioStream.getFormat();
             info = new DataLine.Info(Clip.class, format);
